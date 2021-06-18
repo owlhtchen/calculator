@@ -26,7 +26,7 @@ class Constant: public Expression {
 class Variable: public Expression {
     char name;
     public:
-    Variable(double name): name(name) {};
+    Variable(char name): name(name) {};
     std::shared_ptr<Expression> get_derivative() {
         return std::make_shared<Constant>(1);
     }
@@ -35,9 +35,29 @@ class Variable: public Expression {
     }
 };
 
-// class UnaryOp {
-    
-// };
+class PosUnary: public Expression {
+    std::shared_ptr<Expression> right;
+    public:
+    PosUnary(std::shared_ptr<Expression> right): right(right) { };
+    std::shared_ptr<Expression> get_derivative() {
+        return std::make_shared<Constant>(1);
+    }
+    std::string to_string() {
+        return " +" + right->to_string();
+    }    
+};
+
+class NegUnary: public Expression {
+    std::shared_ptr<Expression> right;
+    public:
+    NegUnary(std::shared_ptr<Expression> right): right(right) { };
+    std::shared_ptr<Expression> get_derivative() {
+        return std::make_shared<Constant>(-1);
+    }    
+    std::string to_string() {
+        return " -" + right->to_string();
+    } 
+};
 
 class BinaryOp: public Expression {
     protected:
@@ -48,12 +68,12 @@ class BinaryOp: public Expression {
         left(left), right(right) { };
 };
 
-class Plus: public BinaryOp {
+class Add: public BinaryOp {
     public:
-    Plus(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right):
+    Add(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right):
         BinaryOp(left, right) { };
     std::shared_ptr<Expression> get_derivative() {
-        return std::make_shared<Plus>(left->get_derivative(), right->get_derivative());
+        return std::make_shared<Add>(left->get_derivative(), right->get_derivative());
     }    
     std::string to_string() {
         return " (" + left->to_string() + " + "  + right->to_string() + ") ";
@@ -79,7 +99,7 @@ class Mul: public BinaryOp {
     std::shared_ptr<Expression> get_derivative() {
         auto deriv_first = std::make_shared<Mul>(left->get_derivative(), right);
         auto deriv_second = std::make_shared<Mul>(left, right->get_derivative());
-        return std::make_shared<Plus>(deriv_first, deriv_second);
+        return std::make_shared<Add>(deriv_first, deriv_second);
     } 
     std::string to_string() {
         return " (" + left->to_string() + " * "  + right->to_string() + ") ";

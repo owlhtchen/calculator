@@ -7,7 +7,7 @@
 
 int main() {
     // s consists of digits, '+', '-', '(', ')', and ' '.
-    std::string s = "3 * 3 + 4";
+    std::string s = "3 * x * 4 + 4";
     s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
     auto parser = Parser(s);
     auto tree = expr(parser);
