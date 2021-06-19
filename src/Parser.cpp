@@ -1,30 +1,12 @@
 #include <iostream>
 #include <string>
 #include <cctype>
-#include "Parser.h"
 #include <memory>
-
-// std::shared_ptr<Expression> term(Parser& s) {
-//     // (expr) +10 -10 10
-//     std::shared_ptr<Expression> res = nullptr;
-//     if(s.current() == '(') {
-//         s.next();
-//         res = expr(s);
-//         s.next();  // eat ')'
-//     } else {
-//         if(s.current() == '+' || s.current() == '-' || isdigit(s.current()) > 0) {
-//             std::string::size_type sz;  
-//             res = std::make_shared<Constant>(std::stod (s.current_str(), &sz));
-//             s.move(sz);
-//         } else {
-//             std::cerr << "unexpected term: " << s.current_str() << "\n";
-//         }
-//     }
-//     // std::cout << "after term\n";
-//     return res;
-// }
+#include <cstdio>
+#include "Parser.h"
 
 std::shared_ptr<Expression> term(Parser& s) {
+    fprintf(stderr, "in term: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(s.current() == '(') {
         s.next();
@@ -40,6 +22,7 @@ std::shared_ptr<Expression> term(Parser& s) {
             s.next();
         } else {
             std::cerr << "unexpected term: " << s.current_str() << "\n";
+            exit(1);
         }
     }
     // std::cout << "after term\n";
@@ -47,6 +30,7 @@ std::shared_ptr<Expression> term(Parser& s) {
 }
 
 std::shared_ptr<Expression> pow(Parser& s) {
+    fprintf(stderr, "in pow: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = term(s);
     // a^b^c means a^(b^c)
     if(!s.end()) {
@@ -59,6 +43,7 @@ std::shared_ptr<Expression> pow(Parser& s) {
 }
 
 std::shared_ptr<Expression> unary(Parser& s) {
+    fprintf(stderr, "in unary: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(s.current() == '+') {
         s.next();
@@ -73,19 +58,22 @@ std::shared_ptr<Expression> unary(Parser& s) {
 }
 
 std::shared_ptr<Expression> factor(Parser& s) {
+    fprintf(stderr, "in factor: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(!s.end()) {
-        res = term(s);
+        res = unary(s);
     }
     while(!s.end()) {
         if(s.current() == '*') {
             s.next();
-            res = std::make_unique<Mul>(res, term(s));
+            res = std::make_unique<Mul>(res, unary(s));
         } else if(s.current() == '/') {
             s.next();
-            res = std::make_unique<Div>(res, term(s));
-        } else {
+            res = std::make_unique<Div>(res, unary(s));
+        } else if(s.current() == '+' || s.current() == '-' || s.current() == ')') {
             break;
+        } else {
+            res = unary(s);
         }
     }
     // std::cout << "after factor\n";
@@ -93,6 +81,7 @@ std::shared_ptr<Expression> factor(Parser& s) {
 }
 
 std::shared_ptr<Expression> expr(Parser& s) {
+    fprintf(stderr, "in expr: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(!s.end()) {
         res = factor(s);
@@ -104,8 +93,10 @@ std::shared_ptr<Expression> expr(Parser& s) {
         } else if(s.current() == '-') {
             s.next();
             res = std::make_unique<Minus>(res, factor(s));
-        } else {
+        } else if(s.current() == ')') {
             break;
+        } else {
+            res = factor(s);
         }
     }
     // std::cout << "after expr\n";
