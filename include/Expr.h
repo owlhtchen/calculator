@@ -11,12 +11,24 @@ class Expression{
     virtual std::string to_string()=0;
 };
 
-class Constant: public Expression {
+class DoubleConst: public Expression {
     double num;
     public:
-    Constant(double num): num(num) {};
+    DoubleConst(double num): num(num) {};
     std::shared_ptr<Expression> get_derivative() {
-        return std::make_shared<Constant>(0);
+        return std::make_shared<DoubleConst>(0);
+    }
+    std::string to_string() {
+        return std::to_string(num);
+    }
+};
+
+class IntConst: public Expression {
+    int num;
+    public:
+    IntConst(int num): num(num) {};
+    std::shared_ptr<Expression> get_derivative() {
+        return std::make_shared<IntConst>(0);
     }
     std::string to_string() {
         return std::to_string(num);
@@ -28,7 +40,7 @@ class Variable: public Expression {
     public:
     Variable(char name): name(name) {};
     std::shared_ptr<Expression> get_derivative() {
-        return std::make_shared<Constant>(1);
+        return std::make_shared<IntConst>(1);
     }
     std::string to_string() {
         return std::string(1, name);
@@ -40,7 +52,7 @@ class PosUnary: public Expression {
     public:
     PosUnary(std::shared_ptr<Expression> right): right(right) { };
     std::shared_ptr<Expression> get_derivative() {
-        return std::make_shared<Constant>(1);
+        return std::make_shared<IntConst>(1);
     }
     std::string to_string() {
         return " +" + right->to_string();
@@ -52,7 +64,7 @@ class NegUnary: public Expression {
     public:
     NegUnary(std::shared_ptr<Expression> right): right(right) { };
     std::shared_ptr<Expression> get_derivative() {
-        return std::make_shared<Constant>(-1);
+        return std::make_shared<IntConst>(-1);
     }    
     std::string to_string() {
         return " -" + right->to_string();
@@ -112,9 +124,11 @@ class Pow: public BinaryOp {
     Pow(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right):
         BinaryOp(left, right) { };    
     std::shared_ptr<Expression> get_derivative() {
-        auto new_exp = std::make_shared<Minus>(right, std::make_shared<Constant>(1));
+        auto new_exp = std::make_shared<Minus>(right, std::make_shared<IntConst>(1));
         auto new_pow = std::make_shared<Pow>(left, new_exp);
-        return std::make_shared<Mul>(right, new_pow);
+        auto no_chained = std::make_shared<Mul>(right, new_pow);
+        auto chained = left->get_derivative();
+        return std::make_shared<Mul>(no_chained, chained);
     }
     std::string to_string() {
         return " (" + left->to_string() + " ^ "  + right->to_string() + ") ";
@@ -130,7 +144,7 @@ class Div: public BinaryOp {
         auto numer_first = std::make_shared<Mul>(left->get_derivative(), right);
         auto numer_second = std::make_shared<Mul>(left, right->get_derivative());
         auto numerator = std::make_shared<Minus>(numer_first, numer_second);
-        auto denominator = std::make_shared<Pow>(right, std::make_shared<Constant>(2));
+        auto denominator = std::make_shared<Pow>(right, std::make_shared<DoubleConst>(2));
         return std::make_shared<Div>(numerator, denominator);
     }   
     std::string to_string() {

@@ -28,6 +28,15 @@ void test_print_tree() {
 }
 
 int main() {
-    test_print_tree();
+    // std::string s = "3 * x^2 ";
+    // std::string s = "(3 * x)^2 ";
+    // std::string s = "1/3";
+    std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
+    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
+    auto parser = Parser(s);
+    auto tree = expr(parser);
+    auto derivative = tree->get_derivative();
+    std::cout << "-- derivative tree:\n";
+    std::cout << derivative->to_string() << std::endl;
     return 0;
 }

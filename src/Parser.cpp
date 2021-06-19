@@ -5,6 +5,10 @@
 #include <cstdio>
 #include "Parser.h"
 
+bool is_int(std::string s) {
+    return s.find('.') == std::string::npos;
+}
+
 std::shared_ptr<Expression> term(Parser& s) {
     fprintf(stderr, "in term: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
@@ -15,7 +19,10 @@ std::shared_ptr<Expression> term(Parser& s) {
     } else {
         if(isdigit(s.current()) > 0) {
             std::string::size_type sz;  
-            res = std::make_shared<Constant>(std::stod (s.current_str(), &sz));
+            res = std::make_shared<DoubleConst>(std::stod(s.current_str(), &sz));
+            if(is_int(s.current_str().substr(0, sz))) {
+                res = std::make_shared<IntConst>(std::stoi(s.current_str(), &sz));
+            }
             s.move(sz);
         } else if(isalpha(s.current())) {
             res = std::make_shared<Variable>(s.current());
