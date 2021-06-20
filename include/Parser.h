@@ -1,5 +1,4 @@
-#ifndef Parser_H
-#define Parser_H
+#pragma once
 #include <iostream>
 #include <string>
 #include <cctype>
@@ -35,4 +34,3 @@ std::shared_ptr<Expression> term(Parser& s);
 std::shared_ptr<Expression> factor(Parser& s);
 std::shared_ptr<Expression> expr(Parser& s);
 
-#endif 

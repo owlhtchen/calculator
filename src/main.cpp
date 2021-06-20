@@ -31,7 +31,9 @@ int main() {
     // std::string s = "3 * x^2 ";
     // std::string s = "(3 * x)^2 ";
     // std::string s = "1/3";
-    std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
+    // std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
+    // std::string s = "2 ^ x";
+    std::string s = "x ^ x";
     s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
     auto parser = Parser(s);
     auto tree = expr(parser);

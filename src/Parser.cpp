@@ -4,6 +4,10 @@
 #include <memory>
 #include <cstdio>
 #include "Parser.h"
+#include "Expr.h"
+#include "ConstVar.h"
+#include "UnaryFunc.h"
+#include "Binary.h"
 
 bool is_int(std::string s) {
     return s.find('.') == std::string::npos;
