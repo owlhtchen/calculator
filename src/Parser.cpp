@@ -14,7 +14,6 @@ bool is_int(std::string s) {
 }
 
 std::shared_ptr<Expression> term(Parser& s) {
-    fprintf(stderr, "in term: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(s.current() == '(') {
         s.next();
@@ -41,7 +40,6 @@ std::shared_ptr<Expression> term(Parser& s) {
 }
 
 std::shared_ptr<Expression> pow(Parser& s) {
-    fprintf(stderr, "in pow: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = term(s);
     // a^b^c means a^(b^c)
     if(!s.end()) {
@@ -54,7 +52,6 @@ std::shared_ptr<Expression> pow(Parser& s) {
 }
 
 std::shared_ptr<Expression> unary(Parser& s) {
-    fprintf(stderr, "in unary: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(s.current() == '+') {
         s.next();
@@ -69,7 +66,6 @@ std::shared_ptr<Expression> unary(Parser& s) {
 }
 
 std::shared_ptr<Expression> factor(Parser& s) {
-    fprintf(stderr, "in factor: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(!s.end()) {
         res = unary(s);
@@ -92,7 +88,6 @@ std::shared_ptr<Expression> factor(Parser& s) {
 }
 
 std::shared_ptr<Expression> expr(Parser& s) {
-    fprintf(stderr, "in expr: %s\n", s.current_str().c_str());
     std::shared_ptr<Expression> res = nullptr;
     if(!s.end()) {
         res = factor(s);

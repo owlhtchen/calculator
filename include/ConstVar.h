@@ -4,29 +4,43 @@
 #include <string>
 #include "Expr.h"
 
-class DoubleConst: public Expression {
-    double num;
+class Const: public Expression {
     public:
+    virtual double getNum() = 0;
+};
+
+class DoubleConst: public Expression {
+    public:
+    double num;
     DoubleConst(double num);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
     bool is_const();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
+    double getNum() {
+        return num;
+    }
 };
 
 class IntConst: public Expression {
-    int num;
     public:
+    int num;
     IntConst(int num);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
     bool is_const();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
+    double getNum() {
+        return num;
+    }
 };
 
 class Variable: public Expression {
-    char name;
     public:
+    char name;
     Variable(char name);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
     bool is_const();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };

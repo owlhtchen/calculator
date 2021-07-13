@@ -3,12 +3,20 @@
 #include <memory>
 #include <string>
 
+class Visitor;
+
 class Expression : public std::enable_shared_from_this<Expression>{
     public:
     virtual std::shared_ptr<Expression> get_derivative()=0;
     virtual std::string to_string()=0;
     virtual bool is_const() = 0;
     virtual ~Expression() { };
+    virtual std::shared_ptr<Expression> accept(Visitor&  visitor) = 0;
+    template <typename Derived>
+    std::shared_ptr<Derived> shared_from_base()
+    {
+        return std::static_pointer_cast<Derived>(shared_from_this());
+    }    
 };
 
 // class DoubleConst: public Expression {

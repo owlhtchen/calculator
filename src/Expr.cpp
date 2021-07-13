@@ -5,6 +5,7 @@
 #include "ConstVar.h"
 #include "UnaryFunc.h"
 #include "Binary.h"
+#include "Visitor.h"
 
 // class Expression{
 
@@ -27,6 +28,9 @@
     bool DoubleConst::is_const() {
         return true;
     }
+    std::shared_ptr<Expression> DoubleConst::accept(Visitor&  visitor) {
+        return  visitor.visit(shared_from_base<DoubleConst>());
+    }
 // };
 
 // class IntConst: public Expression {
@@ -42,6 +46,9 @@
     bool IntConst::is_const() {
         return true;
     }
+    std::shared_ptr<Expression> IntConst::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<IntConst>());
+    }    
 // };
 
 // class Variable: public Expression {
@@ -56,6 +63,9 @@
     }
     bool Variable::is_const() {
         return false;
+    }
+    std::shared_ptr<Expression> Variable::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Variable>());
     }
 // };
 
@@ -72,6 +82,9 @@
     bool PosUnary::is_const() {
         return right->is_const();
     }
+    std::shared_ptr<Expression> PosUnary::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<PosUnary>());
+    } 
 // };
 
 // class NegUnary: public Expression {
@@ -87,6 +100,9 @@
     bool NegUnary::is_const() {
         return right->is_const();
     }
+    std::shared_ptr<Expression> NegUnary::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<NegUnary>());
+    } 
 // };
 
 // class LnFunc: public Expression {
@@ -104,6 +120,9 @@
     bool LnFunc::is_const() {
         return right->is_const();
     }
+    std::shared_ptr<Expression> LnFunc::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<LnFunc>());
+    }    
 // };
 
 // class BinaryOp: public Expression {
@@ -128,6 +147,9 @@
     std::string Add::to_string() {
         return " (" + left->to_string() + " + "  + right->to_string() + ") ";
     }
+    std::shared_ptr<Expression> Add::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Add>());
+    }    
 // };
 
 // class Minus: public BinaryOp {
@@ -139,7 +161,10 @@
     }    
     std::string Minus::to_string() {
         return " (" + left->to_string() + " - "  + right->to_string() + ") ";
-    }    
+    } 
+    std::shared_ptr<Expression> Minus::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Minus>());
+    }
 // };
 
 // class Mul: public BinaryOp {
@@ -153,7 +178,10 @@
     } 
     std::string Mul::to_string() {
         return " (" + left->to_string() + " * "  + right->to_string() + ") ";
-    }           
+    }      
+    std::shared_ptr<Expression> Mul::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Mul>());
+    }         
 // };
 
 // class Pow: public BinaryOp {
@@ -196,7 +224,10 @@
     }
     std::string Pow::to_string() {
         return " (" + left->to_string() + " ^ "  + right->to_string() + ") ";
-    }    
+    } 
+    std::shared_ptr<Expression> Pow::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Pow>());
+    }       
 // };
 
 // class Div: public BinaryOp {
@@ -213,5 +244,8 @@
     }   
     std::string Div::to_string() {
         return " (" + left->to_string() + " / "  + right->to_string() + ") ";
-    }    
+    }  
+    std::shared_ptr<Expression> Div::accept(Visitor&  visitor) {
+        return visitor.visit(shared_from_base<Div>());
+    }      
 // };

@@ -5,10 +5,9 @@
 #include "Expr.h"
 
 class BinaryOp: public Expression {
-    protected:
+    public:
     std::shared_ptr<Expression> left;
     std::shared_ptr<Expression> right;
-    public:
     BinaryOp(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
     bool is_const();
 };
@@ -18,6 +17,7 @@ class Add: public BinaryOp {
     Add(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };
 
 class Minus: public BinaryOp {
@@ -25,6 +25,7 @@ class Minus: public BinaryOp {
     Minus(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };
 
 class Mul: public BinaryOp {
@@ -32,6 +33,7 @@ class Mul: public BinaryOp {
     Mul(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };
 
 class Pow: public BinaryOp {
@@ -40,6 +42,7 @@ class Pow: public BinaryOp {
     Pow(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };
 
 class Div: public BinaryOp {
@@ -48,4 +51,5 @@ class Div: public BinaryOp {
     Div(std::shared_ptr<Expression> numerator, std::shared_ptr<Expression> denominator); 
     std::shared_ptr<Expression> get_derivative();
     std::string to_string();
+    std::shared_ptr<Expression> accept(Visitor&  visitor);
 };

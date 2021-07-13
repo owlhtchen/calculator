@@ -3,6 +3,7 @@
 #include <string>
 #include "Parser.h"
 #include "Expr.h"
+#include "ConstSimplifier.h"
 
 std::string get_tree_str(std::string s) {
     s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
@@ -27,18 +28,38 @@ void test_print_tree() {
     // std::cout << str_tree << std::endl;
 }
 
-int main() {
+void test_deri() {
     // std::string s = "3 * x^2 ";
     // std::string s = "(3 * x)^2 ";
     // std::string s = "1/3";
-    // std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
+    std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
     // std::string s = "2 ^ x";
-    std::string s = "x ^ x";
+    // std::string s = "x ^ x";
     s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
     auto parser = Parser(s);
     auto tree = expr(parser);
     auto derivative = tree->get_derivative();
     std::cout << "-- derivative tree:\n";
-    std::cout << derivative->to_string() << std::endl;
+    std::cout << derivative->to_string() << std::endl;    
+}
+
+int main() {
+    // std::string s = "(0 *  -x)  +  (4 * -1)";
+    // std::string s = "(2 *  ( (4 *  -x)  ^  (2 - 1) ) )";
+    // std::string s = "2 * (x ^ (2-1)) ";
+    // std::string s = "2 * ( (4 *  -x)  ^  (2 - 1) ) ";
+    // std::string s = "( ( ( (2 *  ( (4 *  -x)  ^  (2 - 1) ) )  *  ( (0 *  -x)  +  (4 * -1) ) )  + 1)  *  ( (x ^ 3)  + 1) )";
+    // std::string s = "(3 *  (x ^  (3 - 1) ) )";
+    // std::string s = "( x  * 1)";
+    // std::string s = "( ( ( (4 *  -x)  ^ 2)  + x)  *  ( ( (3 *  (x ^  (3 - 1) ) )  * 1)  + 0) )";
+    // std::string s = " ( ( ( ( (2 *  ( (4 *  -x)  ^  (2 - 1) ) )  *  ( (0 *  -x)  +  (4 * -1) ) )  + 1)  *  ( (x ^ 3)  + 1) )  +  ( ( ( (4 *  -x)  ^ 2)  + x)  *  ( ( (3 *  (x ^  (3 - 1) ) )  * 1)  + 0) ) )";
+    std::string s = "((4*-x)^2 + x) * (x^3 + 1)";
+    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
+    auto parser = Parser(s);
+    auto tree = expr(parser);
+    auto derivative = tree->get_derivative();
+    auto simplified = ConstSimplifier::traverse(derivative);
+    std::cout << " -- final result -- \n";
+    std::cout << simplified->to_string() << std::endl;
     return 0;
 }
